@@ -1,6 +1,31 @@
 (() => {
+  // =========================================================
+  // Version
+  // 새 버전을 배포할 때 이 값만 먼저 변경하세요.
+  // PATCH: 1.0.0 → 1.0.1 (오타/버그/작은 UI 수정)
+  // MINOR: 1.0.0 → 1.1.0 (기능 추가)
+  // MAJOR: 1.0.0 → 2.0.0 (큰 정책/계산 구조 변경)
+  // =========================================================
+  const APP_VERSION = '1.0.0';
+  const RELEASE_DATE = '2026-09-10';
+  const PRICING_YEAR = '2026';
+
   const $ = s => document.querySelector(s);
   let mode = 'refund';
+
+  function renderVersion(){
+    const versionText = `v${APP_VERSION}`;
+    const headerVersion = $('#app-version');
+    const footerVersion = $('#footer-version');
+
+    if (headerVersion) headerVersion.textContent = versionText;
+    if (footerVersion) footerVersion.textContent = versionText;
+
+    document.title = `스마트로그 CS 전용 계산기 ${versionText}`;
+
+    const metaVersion = document.querySelector('meta[name="application-version"]');
+    if (metaVersion) metaVersion.setAttribute('content', APP_VERSION);
+  }
 
   const generalPvs = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,250,300];
   const partnerPvs = [10,20,30,40,50,60,70,80,90,100];
@@ -278,5 +303,6 @@
     }
   });
 
+  renderVersion();
   syncUI();
 })();
