@@ -4,7 +4,7 @@
 // ============================================================
 
 window.APP_META = Object.freeze({
-  version: '1.1.1',
+  version: '1.2.1',
   releaseDate: '2026-09-10',
   pricingYear: '2026'
 });
