@@ -22,7 +22,7 @@
     if (footerVersion) footerVersion.textContent = versionText;
     if (pricingYear) pricingYear.textContent = PRICING_YEAR;
 
-    document.title = `스마트로그 CS 전용 계산기 ${versionText}`;
+    document.title = `스마트로그 CX 전용 계산기 ${versionText}`;
 
     const metaVersion = document.querySelector('meta[name="application-version"]');
     if (metaVersion) metaVersion.setAttribute('content', APP_VERSION);
@@ -51,11 +51,32 @@
     return floor100(generalMonthlyNet(pv) * months * (1 - generalDiscount(months)) * 1.1);
   }
 
+  function partnerEffectiveDiscount(){
+    const selectedDiscount = Number($('#discount').value);
+    const months = Number($('#months').value);
+
+    // 24개월 상품은 기본 30% 할인이 적용됩니다.
+    // 선택한 파트너 할인율이 30%보다 낮으면 30%를 우선 적용하고,
+    // 30%보다 높은 할인율(예: 42.5%)은 그대로 적용합니다.
+    return months === 24 ? Math.max(selectedDiscount, 30) : selectedDiscount;
+  }
+
+  function updatePartnerMonthLabel(){
+    const selectedDiscount = Number($('#discount').value);
+    const month24Option = [...$('#months').options].find(option => Number(option.value) === 24);
+
+    if (!month24Option) return;
+
+    month24Option.textContent = selectedDiscount === 25
+      ? '24개월 · 최소 30% 할인'
+      : '24개월';
+  }
+
   function partnerTotal(){
     const pv = Number($('#refund-pv').value);
-    const discount = Number($('#discount').value);
     const months = Number($('#months').value);
-    return floor100(refundMonthly(pv) * (1 - discount / 100) * months);
+    const effectiveDiscount = partnerEffectiveDiscount();
+    return floor100(refundMonthly(pv) * (1 - effectiveDiscount / 100) * months);
   }
 
   function dateUTC(value){
@@ -99,7 +120,17 @@
       $('#general-total').textContent = total === null ? '1개월만 이용 가능' : money(total);
       $('#general-discount-badge').textContent = discount ? Math.round(discount * 100) + '% 할인' : '할인 없음';
     } else {
+      updatePartnerMonthLabel();
       $('#partner-total').textContent = money(partnerTotal());
+      const months = Number($('#months').value);
+      const selectedDiscount = Number($('#discount').value);
+      const effectiveDiscount = partnerEffectiveDiscount();
+      const helper = $('#partner-price-box .helper');
+      if (helper) {
+        helper.textContent = months === 24 && effectiveDiscount !== selectedDiscount
+          ? `24개월 기본 30% 할인 적용 · 선택 할인율 ${selectedDiscount}% 대신 실제 ${effectiveDiscount}% 적용`
+          : `선택한 페이지뷰 · 할인율 · 결제 기간 기준입니다.${months === 24 ? ` 실제 적용 할인율 ${effectiveDiscount}%` : ''}`;
+      }
     }
   }
 
@@ -196,7 +227,11 @@
     $('#main-result').style.color = refund < 0 ? '#fecaca' : '#ffffff';
     $('#result-note').textContent = refund < 0
       ? '계산상 사용금액이 결제금액을 초과합니다. 실제 처리 기준을 확인해 주세요.'
-      : (partner ? '파트너 결제기간 기준으로 계산된 환불금액입니다.' : '실제 결제금액에서 월 정가 기준 사용요금을 차감했습니다.');
+      : (partner
+          ? (Number($('#months').value) === 24
+              ? `24개월 기본 할인 정책을 반영했습니다. 실제 적용 할인율: ${partnerEffectiveDiscount()}%`
+              : '파트너 결제기간 기준으로 계산된 환불금액입니다.')
+          : '실제 결제금액에서 월 정가 기준 사용요금을 차감했습니다.');
 
     $('#d-days').textContent = days + '일';
     $('#d-monthly').textContent = money(monthly);
@@ -208,7 +243,7 @@
 `[환불 계산]
 회원구분: ${partner ? '일반 파트너회원' : '일반회원'}
 페이지뷰: ${labelPv(pv)}
-결제기간: ${period}개월${partner ? ` / ${$('#discount').value}% 할인` : ''}
+결제기간: ${period}개월${partner ? ` / 선택 할인율 ${$('#discount').value}%${period === 24 ? ` / 실제 적용 ${partnerEffectiveDiscount()}%` : ''}` : ''}
 실제 결제금액: ${money(paid)}
 서비스 사용일: ${days}일
 사용요금(100원 단위 절삭): ${money(usedFloor)}

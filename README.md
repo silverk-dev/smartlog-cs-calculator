@@ -1,6 +1,6 @@
-# Smartlog CS Calculator
+# Smartlog CX Calculator
 
-스마트로그 CS 전용 계산기입니다.
+스마트로그 CX 전용 계산기입니다.
 
 ## 버전 관리 방식
 
@@ -21,7 +21,7 @@ README에는 현재 버전 숫자를 별도로 적지 않으므로 버전 번호
 ## 파일 구조
 
 ```text
-smartlog-cs-calculator/
+smartlog-cx-calculator/
 ├─ index.html
 ├─ styles.css
 ├─ version.js
@@ -109,3 +109,14 @@ v1.1.0
 앞으로 버전 번호를 변경할 때는 **`version.js`만 수정**합니다.
 
 `index.html`, `README.md`, `app.js`에 현재 버전 번호를 따로 기록하지 않습니다.
+
+
+## 24개월 파트너 할인 규칙
+
+일반 파트너회원 환불 계산에서 24개월 상품은 **최소 30% 할인**이 기본 적용됩니다.
+
+- 선택 25% → 실제 30% 적용
+- 선택 30% → 실제 30% 적용
+- 선택 42.5% → 실제 42.5% 적용
+
+예: 10만PV / 24개월 / 선택 할인율 25% → **498,900원**
