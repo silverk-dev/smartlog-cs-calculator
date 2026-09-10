@@ -6,7 +6,7 @@
   // MINOR: 1.0.0 → 1.1.0 (기능 추가)
   // MAJOR: 1.0.0 → 2.0.0 (큰 정책/계산 구조 변경)
   // =========================================================
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.0.0';
   const RELEASE_DATE = '2026-09-10';
   const PRICING_YEAR = '2026';
 
