@@ -124,3 +124,49 @@
       .actions{flex-direction:column}
       .btn{width:100%}
     }
+
+.date-input-wrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+.date-input-wrap > input[type="text"]{
+  padding-right:48px;
+}
+
+.calendar-btn{
+  position:absolute;
+  right:6px;
+  top:50%;
+  transform:translateY(-50%);
+  width:36px;
+  height:36px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  cursor:pointer;
+  font-size:18px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.calendar-btn:hover{
+  background:var(--primary-soft);
+}
+
+.calendar-btn:focus-visible{
+  outline:2px solid var(--primary);
+  outline-offset:2px;
+}
+
+.native-date-picker{
+  position:absolute;
+  right:8px;
+  width:1px;
+  height:1px;
+  opacity:0;
+  pointer-events:none;
+}

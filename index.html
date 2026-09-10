@@ -100,11 +100,19 @@
           <div class="grid2">
             <div class="field">
               <label for="start-date">서비스 시작일</label>
-              <input id="start-date" type="date">
+              <div class="date-input-wrap">
+                <input id="start-date" type="text" inputmode="numeric" autocomplete="off" placeholder="2026-10-10" maxlength="10">
+                <button type="button" class="calendar-btn" data-target="start-date" data-picker="start-date-picker" aria-label="서비스 시작일 달력 열기">📅</button>
+                <input id="start-date-picker" class="native-date-picker" type="date" tabindex="-1" aria-hidden="true">
+              </div>
             </div>
             <div class="field">
               <label for="refund-date">환불 요청일</label>
-              <input id="refund-date" type="date">
+              <div class="date-input-wrap">
+                <input id="refund-date" type="text" inputmode="numeric" autocomplete="off" placeholder="2026-10-10" maxlength="10">
+                <button type="button" class="calendar-btn" data-target="refund-date" data-picker="refund-date-picker" aria-label="환불 요청일 달력 열기">📅</button>
+                <input id="refund-date-picker" class="native-date-picker" type="date" tabindex="-1" aria-hidden="true">
+              </div>
             </div>
           </div>
         </div>
@@ -195,11 +203,5 @@
 
 <script src="version.js"></script>
 <script src="app.js"></script>
-  <!-- Smartlog -->
-    <script type="text/javascript">
-        var hpt_info={'_account':'UHPT-32195', '_server': 'a29'};
-    </script>
-    <script language="javascript" src="//cdn.smlog.co.kr/core/smart.js" charset="utf-8"></script>
-    <noscript><img src="//a29.smlog.co.kr/smart_bda.php?_account=32195" style="display:none;width:0;height:0;" border="0"/></noscript>
 </body>
 </html>

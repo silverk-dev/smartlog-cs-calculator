@@ -81,8 +81,22 @@
 
   function dateUTC(value){
     if (!value) return null;
-    const [y,m,d] = value.split('-').map(Number);
-    return new Date(Date.UTC(y,m-1,d));
+    const trimmed = value.trim();
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+    if (!match) return null;
+
+    const y = Number(match[1]);
+    const m = Number(match[2]);
+    const d = Number(match[3]);
+    const date = new Date(Date.UTC(y, m - 1, d));
+
+    if (
+      date.getUTCFullYear() !== y ||
+      date.getUTCMonth() !== m - 1 ||
+      date.getUTCDate() !== d
+    ) return null;
+
+    return date;
   }
 
   function daysInclusive(a,b){
@@ -177,7 +191,7 @@
 
   function validDates(a,b,msg){
     if(!a || !b){
-      $('#validation').textContent = '날짜를 모두 입력해 주세요.';
+      $('#validation').textContent = '서비스 시작일과 환불 요청일을 YYYY-MM-DD 형식으로 입력해 주세요. 예: 2026-10-10';
       return false;
     }
     if(b < a){
@@ -294,6 +308,47 @@
 월 추가요금: ${money(monthlyDelta)}
 최종 추가 결제금액(100원 단위 절삭): ${money(final)}`;
   }
+
+  function bindEditableDate(input){
+    input.addEventListener('blur', () => {
+      const digits = input.value.replace(/\D/g, '');
+      if (digits.length === 8) {
+        input.value = digits.slice(0,4) + '-' + digits.slice(4,6) + '-' + digits.slice(6,8);
+      }
+    });
+  }
+
+  bindEditableDate($('#start-date'));
+  bindEditableDate($('#refund-date'));
+
+  function bindCalendarPicker(button){
+    const target = $('#' + button.dataset.target);
+    const picker = $('#' + button.dataset.picker);
+    if (!target || !picker) return;
+
+    button.addEventListener('click', () => {
+      const current = target.value.trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(current)) {
+        picker.value = current;
+      }
+
+      if (typeof picker.showPicker === 'function') {
+        picker.showPicker();
+      } else {
+        picker.focus();
+        picker.click();
+      }
+    });
+
+    picker.addEventListener('change', () => {
+      if (picker.value) {
+        target.value = picker.value;
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+  }
+
+  document.querySelectorAll('.calendar-btn').forEach(bindCalendarPicker);
 
   $('#calc-form').addEventListener('submit', e => {
     e.preventDefault();
