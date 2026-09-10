@@ -2,50 +2,83 @@
 
 스마트로그 CS 전용 계산기입니다.
 
-현재 버전: **v1.0.0**  
-요금 기준: **2026년**
+## 버전 관리 방식
+
+버전 정보의 **단일 기준(Single Source of Truth)** 은 `version.js`입니다.
+
+```js
+window.APP_META = Object.freeze({
+  version: '1.0.0',
+  releaseDate: '2026-09-10',
+  pricingYear: '2026'
+});
+```
+
+새 버전을 배포할 때는 `version.js`만 수정하면 계산기 화면 상단/하단의 버전 표기가 자동으로 변경됩니다.
+
+README에는 현재 버전 숫자를 별도로 적지 않으므로 버전 번호를 중복 수정할 필요가 없습니다.
 
 ## 파일 구조
 
 ```text
 smartlog-cs-calculator/
-├─ index.html      # 화면 구조
-├─ styles.css      # UI / 반응형 스타일
-├─ app.js          # 계산 로직 + 버전 번호
-├─ CHANGELOG.md    # 버전별 변경 이력
-└─ README.md       # 운영 / 배포 가이드
+├─ index.html
+├─ styles.css
+├─ version.js
+├─ app.js
+├─ CHANGELOG.md
+└─ README.md
 ```
 
-## 버전 관리 규칙
+- `index.html` — 화면 구조
+- `styles.css` — UI / 반응형 스타일
+- `version.js` — 버전 / 배포일 / 요금 기준 연도
+- `app.js` — 계산 로직 및 인터랙션
+- `CHANGELOG.md` — 버전별 실제 변경 내용
+- `README.md` — 운영 / 배포 가이드
 
-이 프로젝트는 `MAJOR.MINOR.PATCH` 형식을 사용합니다.
+## 버전 규칙
 
-- `1.0.0 → 1.0.1` : 오타, 버그 수정, 작은 UI 수정
-- `1.0.0 → 1.1.0` : 새로운 기능 추가
-- `1.0.0 → 2.0.0` : 요금 정책 또는 계산 구조가 크게 변경되는 경우
+`MAJOR.MINOR.PATCH` 형식을 사용합니다.
 
-### 버전 번호는 어디서 바꾸나요?
+- `1.0.0 → 1.0.1` : 오타, 버그, 작은 UI 수정
+- `1.0.0 → 1.1.0` : 기능 추가
+- `1.0.0 → 2.0.0` : 요금 정책이나 계산 구조의 큰 변경
 
-`app.js` 최상단의 아래 값이 기준입니다.
+## v1.1.0으로 업그레이드하는 예시
+
+### 1. 기능 수정
+
+필요한 `index.html`, `styles.css`, `app.js`를 수정합니다.
+
+### 2. version.js 한 곳만 수정
 
 ```js
-const APP_VERSION = '1.0.0';
-const RELEASE_DATE = '2026-09-10';
-const PRICING_YEAR = '2026';
+window.APP_META = Object.freeze({
+  version: '1.1.0',
+  releaseDate: '2026-10-01',
+  pricingYear: '2026'
+});
 ```
 
-`APP_VERSION`을 바꾸면 화면 상단과 하단의 버전 표시는 자동으로 변경됩니다.
+### 3. CHANGELOG.md에 변경 내용 추가
 
-## 새 버전 배포 순서
+```md
+## [1.1.0] - 2026-10-01
 
-예: `v1.1.0` 배포
+### Added
+- 새로운 기능 추가
 
-1. `app.js`의 `APP_VERSION`을 `1.1.0`으로 변경
-2. `RELEASE_DATE`를 배포일로 변경
-3. `CHANGELOG.md` 최상단에 `v1.1.0` 변경사항 기록
-4. 수정한 파일들을 GitHub에 Commit
-5. Netlify 자동 배포 완료 확인
-6. GitHub에서 태그 `v1.1.0` 또는 Release 생성
+### Changed
+- 기존 기능 개선
+
+### Fixed
+- 오류 수정
+```
+
+`CHANGELOG.md`는 변경 사항 자체를 기록하는 문서이므로 이 부분은 직접 작성합니다.
+
+### 4. GitHub Commit
 
 권장 Commit 메시지:
 
@@ -53,36 +86,26 @@ const PRICING_YEAR = '2026';
 Release v1.1.0
 ```
 
-## GitHub 태그 / Release 권장 방식
+GitHub와 Netlify가 연결되어 있으면 Commit 후 자동 재배포됩니다.
 
-GitHub 저장소에서:
+### 5. GitHub Release / Tag
 
-`Releases` → `Draft a new release` → `Choose a tag` → `v1.1.0`
+권장 태그:
 
-Release 제목도 `v1.1.0`으로 하고 `CHANGELOG.md`의 해당 버전 내용을 복사하면 됩니다.
-
-이렇게 해두면 문제가 생겼을 때 이전 버전 코드를 쉽게 확인하거나 되돌릴 수 있습니다.
-
-## Netlify 배포
-
-`index.html`, `styles.css`, `app.js`를 GitHub 저장소 최상위 경로에 두면 됩니다.
-
-GitHub와 Netlify가 연결된 상태에서는 `main` 브랜치에 Commit하면 Netlify가 자동으로 새 버전을 배포합니다.
+```text
+v1.1.0
+```
 
 ## 유지보수 위치
 
-- 화면 구성 / 문구 수정 → `index.html`
-- 색상 / 레이아웃 / 모바일 UI 수정 → `styles.css`
-- 요금 / 계산식 / 동작 / 버전 수정 → `app.js`
-- 변경 이력 기록 → `CHANGELOG.md`
+- 화면 구성 / 문구 → `index.html`
+- 디자인 / 반응형 → `styles.css`
+- 버전 / 배포일 / 요금연도 → `version.js`
+- 요금 / 계산식 / 동작 → `app.js`
+- 변경 기록 → `CHANGELOG.md`
 
-## 배포 전 체크
+## 핵심 원칙
 
-- 일반회원 환불 계산
-- 파트너회원 환불 계산
-- 일반회원 PV 업그레이드
-- 파트너회원 PV 업그레이드
-- 실제 결제금액 자동 표시
-- 날짜 역전 입력 시 오류 메시지
-- CS 전달용 문구 생성 / 복사
-- 모바일 화면 확인
+앞으로 버전 번호를 변경할 때는 **`version.js`만 수정**합니다.
+
+`index.html`, `README.md`, `app.js`에 현재 버전 번호를 따로 기록하지 않습니다.

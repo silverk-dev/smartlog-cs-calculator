@@ -1,14 +1,13 @@
 (() => {
-  // =========================================================
-  // Version
-  // 새 버전을 배포할 때 이 값만 먼저 변경하세요.
-  // PATCH: 1.0.0 → 1.0.1 (오타/버그/작은 UI 수정)
-  // MINOR: 1.0.0 → 1.1.0 (기능 추가)
-  // MAJOR: 1.0.0 → 2.0.0 (큰 정책/계산 구조 변경)
-  // =========================================================
-  const APP_VERSION = '1.0.0';
-  const RELEASE_DATE = '2026-09-10';
-  const PRICING_YEAR = '2026';
+  // 버전 정보는 version.js 한 곳에서만 관리합니다.
+  const APP_META = window.APP_META || {
+    version: '0.0.0',
+    releaseDate: '',
+    pricingYear: ''
+  };
+  const APP_VERSION = APP_META.version;
+  const RELEASE_DATE = APP_META.releaseDate;
+  const PRICING_YEAR = APP_META.pricingYear;
 
   const $ = s => document.querySelector(s);
   let mode = 'refund';
@@ -17,9 +16,11 @@
     const versionText = `v${APP_VERSION}`;
     const headerVersion = $('#app-version');
     const footerVersion = $('#footer-version');
+    const pricingYear = $('#pricing-year');
 
     if (headerVersion) headerVersion.textContent = versionText;
     if (footerVersion) footerVersion.textContent = versionText;
+    if (pricingYear) pricingYear.textContent = PRICING_YEAR;
 
     document.title = `스마트로그 CS 전용 계산기 ${versionText}`;
 
