@@ -260,7 +260,7 @@
 결제기간: ${period}개월${partner ? ` / 선택 할인율 ${$('#discount').value}%${period === 24 ? ` / 실제 적용 ${partnerEffectiveDiscount()}%` : ''}` : ''}
 실제 결제금액: ${money(paid)}
 서비스 사용일: ${days}일
-사용요금(100원 단위 절삭): ${money(usedFloor)}
+사용요금(10원 단위 절삭): ${money(usedFloor)}
 최종 환불금액: ${money(refund)}`;
   }
 
@@ -306,7 +306,7 @@
 변경: ${labelPv(cur)} → ${labelPv(target)}${partner ? `\n파트너 할인율: ${$('#upgrade-discount').value}%` : ''}
 만기일까지 남은 기간: ${days}일
 월 추가요금: ${money(monthlyDelta)}
-최종 추가 결제금액(100원 단위 절삭): ${money(final)}`;
+최종 추가 결제금액(10원 단위 절삭): ${money(final)}`;
   }
 
   function bindEditableDate(input){
