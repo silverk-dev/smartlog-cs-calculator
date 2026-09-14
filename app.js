@@ -116,6 +116,131 @@
     el.value = String(selected);
   }
 
+  function upgradeHistoryRows(){
+    return [...document.querySelectorAll('.upgrade-history-row')];
+  }
+
+  function createUpgradeHistoryRow(values = {}){
+    const row = document.createElement('div');
+    row.className = 'upgrade-history-row';
+
+    const dateValue = values.date || '';
+
+    const isPartner = $('#member').value === 'partner';
+    const availablePvs = isPartner ? partnerPvs : generalPvs;
+    const currentPv = Number($('#refund-pv').value) || 10;
+    const defaultPv =
+      availablePvs.find(pv => pv > currentPv) ||
+      availablePvs[availablePvs.length - 1];
+
+    const pvValue = availablePvs.includes(Number(values.pv))
+      ? Number(values.pv)
+      : defaultPv;
+
+    const amountValue = values.amount ?? '';
+
+    row.innerHTML = `
+      <div class="field">
+        <label>업그레이드일</label>
+        <input class="history-date" type="date" value="${dateValue}">
+      </div>
+      <div class="field">
+        <label>변경 후 PV</label>
+        <select class="history-pv"></select>
+      </div>
+      <div class="field">
+        <label>추가 결제금액</label>
+        <div class="money-input-wrap">
+          <input class="history-amount" type="number" inputmode="numeric" min="0" step="100" placeholder="예: 22300" value="${amountValue}">
+          <span>원</span>
+        </div>
+      </div>
+      <button type="button" class="remove-history" aria-label="업그레이드 이력 삭제">삭제</button>
+    `;
+
+    const select = row.querySelector('.history-pv');
+    availablePvs.forEach(pv => {
+      const option = document.createElement('option');
+      option.value = String(pv);
+      option.textContent = labelPv(pv);
+      if (pv === pvValue) option.selected = true;
+      select.appendChild(option);
+    });
+
+    row.querySelectorAll('input,select').forEach(el => {
+      el.addEventListener('input', () => { updateUpgradeRefundSummary(); clearResults(); });
+      el.addEventListener('change', () => { updateUpgradeRefundSummary(); clearResults(); });
+    });
+
+    row.querySelector('.remove-history').addEventListener('click', () => {
+      row.remove();
+      if (!upgradeHistoryRows().length && $('#has-upgrade-history').checked) {
+        createUpgradeHistoryRow();
+      }
+      updateUpgradeRefundSummary();
+      clearResults();
+    });
+
+    $('#upgrade-history-list').appendChild(row);
+    updateUpgradeRefundSummary();
+  }
+
+  function refreshUpgradeHistoryPvOptions(){
+    const isPartner = $('#member').value === 'partner';
+    const availablePvs = isPartner ? partnerPvs : generalPvs;
+
+    upgradeHistoryRows().forEach(row => {
+      const select = row.querySelector('.history-pv');
+      const current = Number(select.value);
+
+      select.innerHTML = '';
+
+      availablePvs.forEach(pv => {
+        const option = document.createElement('option');
+        option.value = String(pv);
+        option.textContent = labelPv(pv);
+        select.appendChild(option);
+      });
+
+      select.value = String(
+        availablePvs.includes(current)
+          ? current
+          : availablePvs[availablePvs.length - 1]
+      );
+    });
+  }
+
+  function getUpgradeHistory(){
+    return upgradeHistoryRows().map((row, index) => ({
+      index,
+      dateText: row.querySelector('.history-date').value,
+      date: dateUTC(row.querySelector('.history-date').value),
+      pv: Number(row.querySelector('.history-pv').value),
+      amount: Number(row.querySelector('.history-amount').value)
+    }));
+  }
+
+  function getFinalUpgradePv(history){
+    const withValidDates = history.filter(item => item.date);
+    if (!withValidDates.length) return null;
+    withValidDates.sort((a,b) => a.date - b.date || a.index - b.index);
+    return withValidDates[withValidDates.length - 1].pv;
+  }
+
+  function getUpgradeExtraPaid(history){
+    return history.reduce((sum, item) => sum + (Number.isFinite(item.amount) ? item.amount : 0), 0);
+  }
+
+  function updateUpgradeRefundSummary(){
+    const partner = $('#member').value === 'partner';
+    const basePaid = partner ? partnerTotal() : generalTotal();
+    const history = getUpgradeHistory();
+    const extraPaid = getUpgradeExtraPaid(history);
+    $('#upgrade-base-paid').textContent = basePaid === null ? '-' : money(basePaid);
+    $('#upgrade-extra-paid').textContent = money(extraPaid);
+    $('#upgrade-total-paid').textContent = basePaid === null ? '-' : money(basePaid + extraPaid);
+  }
+
   function updateGeneralMonthAvailability(){
     const pv = Number($('#refund-pv').value);
     const sel = $('#general-months');
@@ -133,6 +258,7 @@
       const discount = generalDiscount(months);
       $('#general-total').textContent = total === null ? '1개월만 이용 가능' : money(total);
       $('#general-discount-badge').textContent = discount ? Math.round(discount * 100) + '% 할인' : '할인 없음';
+      updateUpgradeRefundSummary();
     } else {
       updatePartnerMonthLabel();
       $('#partner-total').textContent = money(partnerTotal());
@@ -145,6 +271,7 @@
           ? `24개월 기본 30% 할인 적용 · 선택 할인율 ${selectedDiscount}% 대신 실제 ${effectiveDiscount}% 적용`
           : `선택한 페이지뷰 · 할인율 · 결제 기간 기준입니다.${months === 24 ? ` 실제 적용 할인율 ${effectiveDiscount}%` : ''}`;
       }
+      updateUpgradeRefundSummary();
     }
   }
 
@@ -161,7 +288,7 @@
   function clearResults(){
     $('#main-result').textContent = '-';
     $('#result-note').textContent = '조건을 입력한 후 계산해 주세요.';
-    ['#d-days','#d-monthly','#d-daily','#d-work','#d-floor'].forEach(s => $(s).textContent = '-');
+    ['#d-days','#d-final-pv','#d-paid','#d-monthly','#d-daily','#d-work','#d-floor'].forEach(s => $(s).textContent = '-');
     $('#cs-text').value = '';
     $('#validation').textContent = '';
     $('#copy-status').textContent = '';
@@ -178,6 +305,8 @@
     $('#partner-refund-options').classList.toggle('hidden', !partner);
     $('#partner-price-box').classList.toggle('hidden', !partner);
     $('#upgrade-partner-options').classList.toggle('hidden', !partner);
+    $('#upgrade-refund-toggle-wrap').classList.toggle('hidden', mode !== 'refund');
+    $('#upgrade-refund-section').classList.toggle('hidden', mode !== 'refund' || !$('#has-upgrade-history').checked);
 
     $('#result-label').textContent = mode === 'refund' ? '최종 환불금액' : '최종 추가 결제금액';
     $('#d-work-label').textContent = mode === 'refund' ? '사용금액' : '추가금액';
@@ -185,6 +314,7 @@
     $('#tab-refund').classList.toggle('active', mode === 'refund');
     $('#tab-upgrade').classList.toggle('active', mode === 'upgrade');
 
+    refreshUpgradeHistoryPvOptions();
     updatePvOptions();
     clearResults();
   }
@@ -210,9 +340,56 @@
     if(!validDates(start,end,'환불 요청일은 서비스 시작일보다 빠를 수 없습니다.')) return;
 
     const days = daysInclusive(start,end);
-    let paid, monthly, daily, used, usedFloor, period;
+    let paid, monthly, daily, used, usedFloor, period, finalPv = pv;
+    const hasUpgradeHistory = $('#has-upgrade-history').checked;
 
-    if(partner){
+    if(hasUpgradeHistory){
+      period = partner ? Number($('#months').value) : Number($('#general-months').value);
+      const basePaid = partner ? partnerTotal() : generalTotal();
+
+      if(basePaid === null){
+        $('#validation').textContent = '300만PV는 1개월 선불제만 선택할 수 있습니다.';
+        return;
+      }
+
+      const history = getUpgradeHistory();
+      if(!history.length){
+        $('#validation').textContent = '업그레이드 결제 이력을 1건 이상 입력해 주세요.';
+        return;
+      }
+
+      for(const item of history){
+        if(!item.date){
+          $('#validation').textContent = '모든 업그레이드일을 입력해 주세요.';
+          return;
+        }
+        if(item.date < start || item.date > end){
+          $('#validation').textContent = '업그레이드일은 서비스 시작일 이후, 환불 요청일 이전이어야 합니다.';
+          return;
+        }
+        if(!Number.isFinite(item.amount) || item.amount <= 0){
+          $('#validation').textContent = '모든 업그레이드 추가 결제금액을 입력해 주세요.';
+          return;
+        }
+      }
+
+      finalPv = getFinalUpgradePv(history);
+      const extraPaid = getUpgradeExtraPaid(history);
+      paid = basePaid + extraPaid;
+
+      if(partner){
+        // 파트너 업그레이드 환불은 최종 PV 요금을 다시 계산하지 않고,
+        // 최초 결제 + 업그레이드 추가 결제 총액을 최초 계약 개월 수로 나눠 일할 계산합니다.
+        monthly = paid / period;
+      } else {
+        // 일반회원은 기존 정책대로 최종 이용 PV의 정가를 전체 사용기간에 적용합니다.
+        monthly = refundMonthly(finalPv);
+      }
+
+      daily = monthly / 30;
+      used = daily * days;
+      usedFloor = floor100(used);
+    } else if(partner){
       period = Number($('#months').value);
       paid = partnerTotal();
       monthly = paid / period;
@@ -241,27 +418,51 @@
     $('#main-result').style.color = refund < 0 ? '#fecaca' : '#ffffff';
     $('#result-note').textContent = refund < 0
       ? '계산상 사용금액이 결제금액을 초과합니다. 실제 처리 기준을 확인해 주세요.'
-      : (partner
-          ? (Number($('#months').value) === 24
-              ? `24개월 기본 할인 정책을 반영했습니다. 실제 적용 할인율: ${partnerEffectiveDiscount()}%`
-              : '파트너 결제기간 기준으로 계산된 환불금액입니다.')
-          : '실제 결제금액에서 월 정가 기준 사용요금을 차감했습니다.');
+      : hasUpgradeHistory
+          ? (partner
+              ? `업그레이드 포함 총 결제금액을 ${period}개월로 나눠 일할 계산했습니다.`
+              : `업그레이드 후 최종 ${labelPv(finalPv)} 정가를 전체 사용기간에 적용했습니다.`)
+          : partner
+              ? (Number($('#months').value) === 24
+                  ? `24개월 기본 할인 정책을 반영했습니다. 실제 적용 할인율: ${partnerEffectiveDiscount()}%`
+                  : '파트너 결제기간 기준으로 계산된 환불금액입니다.')
+              : '실제 결제금액에서 월 정가 기준 사용요금을 차감했습니다.';
 
     $('#d-days').textContent = days + '일';
+    $('#d-final-pv').textContent = labelPv(finalPv);
+    $('#d-paid').textContent = money(paid);
     $('#d-monthly').textContent = money(monthly);
     $('#d-daily').textContent = money(daily);
     $('#d-work').textContent = money(used);
     $('#d-floor').textContent = money(usedFloor);
 
-    $('#cs-text').value =
-`[환불 계산]
+    if(hasUpgradeHistory){
+      const history = getUpgradeHistory().sort((a,b) => a.date - b.date || a.index - b.index);
+      const historyText = history.map((item, idx) =>
+        `${idx + 1}차 업그레이드: ${item.dateText} / ${labelPv(item.pv)} / 추가결제 ${money(item.amount)}`
+      ).join('\n');
+      const basePaid = partner ? partnerTotal() : generalTotal();
+      const extraPaid = getUpgradeExtraPaid(history);
+
+      $('#cs-text').value =
+`[업그레이드 이력 포함 환불 계산]
 회원구분: ${partner ? '일반 파트너회원' : '일반회원'}
-페이지뷰: ${labelPv(pv)}
-결제기간: ${period}개월${partner ? ` / 선택 할인율 ${$('#discount').value}%${period === 24 ? ` / 실제 적용 ${partnerEffectiveDiscount()}%` : ''}` : ''}
-실제 결제금액: ${money(paid)}
+최초 상품: ${labelPv(pv)} / ${period}개월${partner ? ` / 선택 할인율 ${$('#discount').value}%${period === 24 ? ` / 실제 적용 ${partnerEffectiveDiscount()}%` : ''}` : ''}
+최초 결제금액: ${money(basePaid)}
+${historyText}
+추가 결제금액 합계: ${money(extraPaid)}
+총 결제금액: ${money(paid)}
+최종 적용 PV: ${labelPv(finalPv)}
 서비스 사용일: ${days}일
+${partner ? '총 결제금액 기준 일요금' : '정가 일요금'}: ${money(daily)}
 사용요금(10원 단위 절삭): ${money(usedFloor)}
 최종 환불금액: ${money(refund)}`;
+    } else {
+      $('#cs-text').value =
+`1:1)서비스 환불 요청
+${Math.round(paid).toLocaleString('ko-KR')}/${period}개월=${Math.round(monthly).toLocaleString('ko-KR')}원/30일=${Math.round(daily).toLocaleString('ko-KR')}원*${days}일 사용=${Math.round(usedFloor).toLocaleString('ko-KR')}원(10원 단위 절사)
+${Math.round(paid).toLocaleString('ko-KR')}-${Math.round(usedFloor).toLocaleString('ko-KR')}=${Math.round(refund).toLocaleString('ko-KR')}원 환불`;
+    }
   }
 
   function calculateUpgrade(){
@@ -295,6 +496,8 @@
       : '만기일까지 남은 기간을 30일 기준으로 일할 계산했습니다.';
 
     $('#d-days').textContent = days + '일';
+    $('#d-final-pv').textContent = labelPv(target);
+    $('#d-paid').textContent = '-';
     $('#d-monthly').textContent = money(monthlyDelta);
     $('#d-daily').textContent = money(daily);
     $('#d-work').textContent = money(amount);
@@ -306,7 +509,7 @@
 변경: ${labelPv(cur)} → ${labelPv(target)}${partner ? `\n파트너 할인율: ${$('#upgrade-discount').value}%` : ''}
 만기일까지 남은 기간: ${days}일
 월 추가요금: ${money(monthlyDelta)}
-최종 추가 결제금액(10원 단위 절삭): ${money(final)}`;
+최종 추가 결제금액(10원 단위 절사): ${money(final)}`;
   }
 
   function bindEditableDate(input){
@@ -350,6 +553,19 @@
 
   document.querySelectorAll('.calendar-btn').forEach(bindCalendarPicker);
 
+  $('#has-upgrade-history').addEventListener('change', () => {
+    const enabled = $('#has-upgrade-history').checked;
+    $('#upgrade-refund-section').classList.toggle('hidden', !enabled || mode !== 'refund');
+    if(enabled && !upgradeHistoryRows().length) createUpgradeHistoryRow();
+    updateUpgradeRefundSummary();
+    clearResults();
+  });
+
+  $('#add-upgrade-history').addEventListener('click', () => {
+    createUpgradeHistoryRow();
+    clearResults();
+  });
+
   $('#calc-form').addEventListener('submit', e => {
     e.preventDefault();
     mode === 'refund' ? calculateRefund() : calculateUpgrade();
@@ -374,6 +590,7 @@
 
   $('#reset-btn').addEventListener('click', () => {
     $('#calc-form').reset();
+    $('#upgrade-history-list').innerHTML = '';
     mode='refund';
     syncUI();
   });

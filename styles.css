@@ -170,3 +170,112 @@
   opacity:0;
   pointer-events:none;
 }
+
+
+.upgrade-refund-toggle{
+  margin-top:14px;
+  padding:14px 15px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--panel-soft);
+}
+.check-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:13px;
+  font-weight:850;
+  cursor:pointer;
+}
+.check-row input{
+  width:18px;
+  height:18px;
+  min-height:0;
+  padding:0;
+  accent-color:var(--primary);
+}
+.upgrade-history-panel{
+  margin-top:14px;
+  padding:15px;
+  border:1px solid #cfe0ff;
+  border-radius:16px;
+  background:#f8fbff;
+}
+.section-heading-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.section-title.compact{margin:0 0 3px}
+.mini-btn{
+  flex:0 0 auto;
+  min-height:38px;
+  border:1px solid #bfd4ff;
+  border-radius:10px;
+  padding:0 11px;
+  background:#fff;
+  color:var(--primary-2);
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+}
+.upgrade-history-list{display:grid;gap:10px}
+.upgrade-history-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1.05fr auto;
+  align-items:end;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#fff;
+}
+.upgrade-history-row .field label{font-size:11px}
+.money-input-wrap{position:relative}
+.money-input-wrap input{padding-right:30px}
+.money-input-wrap span{
+  position:absolute;
+  right:11px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:12px;
+}
+.remove-history{
+  min-height:46px;
+  border:1px solid #fecaca;
+  background:#fff;
+  color:#b91c1c;
+  border-radius:10px;
+  padding:0 10px;
+  font-size:12px;
+  font-weight:850;
+  cursor:pointer;
+}
+.upgrade-summary{
+  margin-top:12px;
+  border-top:1px solid var(--line);
+  padding-top:10px;
+  display:grid;
+  gap:7px;
+  font-size:12px;
+}
+.upgrade-summary > div{display:flex;justify-content:space-between;gap:12px}
+.upgrade-summary span{color:var(--muted)}
+.upgrade-summary-total{
+  margin-top:3px;
+  padding-top:9px;
+  border-top:1px dashed #cbd5e1;
+  font-size:14px;
+}
+@media (max-width:700px){
+  .upgrade-history-row{grid-template-columns:1fr 1fr}
+  .remove-history{grid-column:1 / -1}
+  .section-heading-row{flex-direction:column}
+}
+@media (max-width:480px){
+  .upgrade-history-row{grid-template-columns:1fr}
+  .remove-history{grid-column:auto}
+}

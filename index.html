@@ -65,6 +65,30 @@
             <div class="helper">페이지뷰와 결제 기간을 선택하면 VAT 포함 금액이 자동 표시됩니다.</div>
           </div>
 
+          <div id="upgrade-refund-toggle-wrap" class="upgrade-refund-toggle">
+            <label class="check-row" for="has-upgrade-history">
+              <input id="has-upgrade-history" type="checkbox">
+              <span>업그레이드 추가 결제 이력이 있음</span>
+            </label>
+            <div class="helper">PV 업그레이드를 1회 이상 추가 결제한 뒤 환불하는 경우 선택하세요. 일반회원과 일반 파트너회원 모두 사용할 수 있습니다.</div>
+          </div>
+
+          <div id="upgrade-refund-section" class="upgrade-history-panel hidden">
+            <div class="section-heading-row">
+              <div>
+                <div class="section-title compact">업그레이드 결제 이력</div>
+                <div class="helper">일반회원은 최종 PV 정가 기준, 파트너회원은 최초 결제금액과 업그레이드 추가 결제금액의 합계를 기준으로 환불 사용요금을 계산합니다.</div>
+              </div>
+              <button type="button" id="add-upgrade-history" class="mini-btn">+ 업그레이드 추가</button>
+            </div>
+            <div id="upgrade-history-list" class="upgrade-history-list"></div>
+            <div class="upgrade-summary">
+              <div><span>최초 결제금액</span><strong id="upgrade-base-paid">-</strong></div>
+              <div><span>추가 결제금액 합계</span><strong id="upgrade-extra-paid">0원</strong></div>
+              <div class="upgrade-summary-total"><span>총 결제금액</span><strong id="upgrade-total-paid">-</strong></div>
+            </div>
+          </div>
+
           <div id="partner-refund-options" class="hidden">
             <div class="section-title">파트너 조건</div>
             <div class="grid2">
@@ -174,16 +198,18 @@
         <div class="section-title" style="margin-top:0">계산 상세</div>
         <dl class="details">
           <div class="row"><dt>서비스 사용일 / 남은 일수</dt><dd id="d-days">-</dd></div>
+          <div class="row"><dt>최종 적용 PV</dt><dd id="d-final-pv">-</dd></div>
+          <div class="row"><dt>총 결제금액</dt><dd id="d-paid">-</dd></div>
           <div class="row"><dt>월 기준금액</dt><dd id="d-monthly">-</dd></div>
           <div class="row"><dt>일일 기준금액</dt><dd id="d-daily">-</dd></div>
           <div class="row"><dt id="d-work-label">사용금액</dt><dd id="d-work">-</dd></div>
-          <div class="row"><dt>10원 단위 절삭 후</dt><dd id="d-floor">-</dd></div>
+          <div class="row"><dt>10원 단위 절사 후</dt><dd id="d-floor">-</dd></div>
         </dl>
       </div>
 
       <div class="card copy-card">
         <div class="copy-top">
-          <div class="copy-title">SP 기록용 환불 내역</div>
+          <div class="copy-title">SP 내부 기록 문구</div>
           <button type="button" id="copy-btn" class="copy-btn">문구 복사</button>
         </div>
         <textarea id="cs-text" readonly placeholder="계산 결과가 여기에 자동으로 정리됩니다."></textarea>
@@ -192,7 +218,7 @@
 
       <div class="notice">
         <strong>계산 기준</strong><br>
-        1개월 = 30일 · 시작일/요청일 포함 · 최종 사용금액 및 추가 결제금액은 10원 단위 절삭 기준입니다.
+        1개월 = 30일 · 시작일/요청일 포함 · 최종 사용금액 및 추가 결제금액은 10원 단위 절사 기준입니다.
         실제 환불 처리 전 내부 정책과 결제 이력을 함께 확인해 주세요.
       </div>
     </section>
