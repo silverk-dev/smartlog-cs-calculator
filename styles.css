@@ -279,3 +279,125 @@
   .upgrade-history-row{grid-template-columns:1fr}
   .remove-history{grid-column:auto}
 }
+
+
+/* PV별 일 요금표 */
+.daily-rate-section{
+  margin-top:18px;
+}
+.daily-rate-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.daily-rate-card > summary{
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:18px 20px;
+  cursor:pointer;
+  user-select:none;
+}
+.daily-rate-card > summary::-webkit-details-marker{
+  display:none;
+}
+.daily-rate-title{
+  display:block;
+  font-size:14px;
+  font-weight:900;
+  color:#334155;
+}
+.daily-rate-subtitle{
+  display:block;
+  margin-top:4px;
+  font-size:11px;
+  line-height:1.5;
+  color:var(--muted);
+}
+.daily-rate-toggle{
+  flex:0 0 auto;
+  border:1px solid #bfd4ff;
+  background:var(--primary-soft);
+  color:var(--primary-2);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:900;
+}
+.daily-rate-card[open] .daily-rate-toggle{
+  font-size:0;
+}
+.daily-rate-card[open] .daily-rate-toggle::after{
+  content:"접기";
+  font-size:11px;
+}
+.daily-rate-content{
+  border-top:1px solid var(--line);
+  padding:18px 20px 16px;
+}
+.daily-rate-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.daily-rate-group{
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+}
+.daily-rate-head,
+.daily-rate-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:10px;
+}
+.daily-rate-head{
+  padding:9px 12px;
+  background:var(--panel-soft);
+  color:#64748b;
+  font-size:11px;
+  font-weight:900;
+}
+.daily-rate-head span:last-child,
+.daily-rate-row strong{
+  text-align:right;
+}
+.daily-rate-row{
+  padding:9px 12px;
+  border-top:1px solid #eef2f7;
+  font-size:12px;
+}
+.daily-rate-row span{
+  color:#475569;
+  font-weight:700;
+}
+.daily-rate-row strong{
+  color:var(--text);
+  font-weight:900;
+}
+.daily-rate-note{
+  margin-top:12px;
+  font-size:11px;
+  line-height:1.6;
+  color:var(--muted);
+}
+@media (max-width:860px){
+  .daily-rate-grid{
+    grid-template-columns:1fr;
+  }
+}
+@media (max-width:560px){
+  .daily-rate-card > summary{
+    padding:15px;
+    align-items:flex-start;
+  }
+  .daily-rate-content{
+    padding:14px;
+  }
+}
