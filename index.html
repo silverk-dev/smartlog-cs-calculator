@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>스마트로그 CX 전용 계산기</title>
   <meta name="application-version" content="1.0.0">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/sms.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/sessionid.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -15,10 +19,15 @@
       <h1>스마트로그 CX 전용 계산기</h1>
       <p>환불금액과 페이지뷰 업그레이드 비용을 빠르게 계산합니다.<br>팀 내부 업무용으로 사용해 주세요.</p>
     </div>
-    <div class="version"><span id="pricing-year">2026</span> 요금 기준 · <span id="app-version">v1.0.0</span></div>
+    <div>
+      <div class="version"><span id="pricing-year">2026</span> 요금 기준 · <span id="app-version">v1.0.0</span></div>
+      <button type="button" id="sms-toggle" class="mini-btn">SMS 추출기</button>
+      <button type="button" id="mobile-tool-btn" class="mini-btn">단말기세션 추출</button>
+      <button type="button" id="sessionid-tool-btn" class="mini-btn">세션ID 추출</button>
+    </div>
   </header>
 
-  <main class="layout">
+  <main id="calculator-view" class="layout">
     <section class="card">
       <div class="tabs">
         <button type="button" id="tab-refund" class="tab active">환불 계산</button>
@@ -41,7 +50,6 @@
               <label for="refund-pv">페이지뷰</label>
               <select id="refund-pv"></select>
             </div>
-
             <div id="general-month-wrap" class="field">
               <label for="general-months">결제 기간</label>
               <select id="general-months">
@@ -224,8 +232,6 @@
     </section>
   </main>
 
-
-
   <section class="daily-rate-section">
     <details class="daily-rate-card">
       <summary>
@@ -395,12 +401,149 @@
     </details>
   </section>
 
+  <section id="sms-view" class="hidden" aria-labelledby="sms-title">
+    <h1 id="sms-title">SMS 추출기</h1>
+    <p class="sub">SMS 추출 사이트의 원본 내용을 그대로 붙여넣으세요. 결과는 <b>메시지 / 발신날짜 / 발신번호</b> 3개 컬럼으로 정리되며, 한 문의의 여러 줄 메시지는 메시지 셀 하나 안에서 줄바꿈으로 유지되고, 발신날짜와 발신번호는 각각 별도 칸으로 구분됩니다.</p>
 
+    <button type="button" id="calculator-toggle" class="mini-btn">CX 계산기로 돌아가기</button>
+
+    <div class="card">
+      <textarea id="input" placeholder="여기에 SMS 추출 원본을 그대로 붙여넣으세요."></textarea>
+      <div class="buttons">
+        <button type="button" class="primary" id="convert">변환하기</button>
+        <button type="button" class="secondary" id="copy">엑셀 3칸으로 복사</button>
+        <button type="button" class="secondary" id="download">CSV 다운로드</button>
+        <button type="button" class="secondary" id="downloadXlsx">XLSX 다운로드</button>
+        <button type="button" class="gray" id="sample">예시 넣기</button>
+        <button type="button" class="red" id="clear">지우기</button>
+      </div>
+      <div id="status" aria-live="polite"></div>
+    </div>
+
+    <div class="card">
+      <div class="meta"><span id="records">문의 0건</span><span id="rows">출력 0행</span></div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>메시지</th><th>발신날짜</th><th>발신번호</th></tr></thead>
+          <tbody id="body"><tr><td colspan="3">변환 결과가 여기에 표시됩니다.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="mobile-view" class="hidden" aria-labelledby="mobile-title">
+    <h1 id="mobile-title">단말기세션 로그 추출기</h1>
+    <p class="desc">
+      로그 데이터를 탭 또는 공백 형태로 그대로 붙여넣으면 필요한 9개 항목만 자동 정리합니다.
+      IP 뒤에 붙는 <b>signal_cellular_alt</b> 문구는 자동으로 제거합니다.
+    </p>
+
+    <button type="button" id="mobile-back-btn">CX 계산기로 돌아가기</button>
+
+    <div class="card">
+      <section class="section">
+        <div class="section-title">
+          <h2>1. 원본 데이터 붙여넣기</h2>
+          <span class="hint">TSV / 마크다운 표 복붙 지원</span>
+        </div>
+
+        <textarea id="source" placeholder="로그 데이터를 여기에 그대로 붙여넣으세요. TSV 또는 | 로 구분된 마크다운 표를 지원합니다."></textarea>
+
+        <div class="actions">
+          <button class="primary" id="convertBtn">변환하기</button>
+          <button class="sub" id="exampleBtn">예시 넣기</button>
+          <button class="danger" id="clearBtn">지우기</button>
+        </div>
+
+        <div class="format-box">
+          출력 컬럼 고정:<br>
+          <b>방문시간 / IP / 통신사 / 클릭유형 / 광고종류 / 광고사이트 / 키워드 / 체류시간 / GPS</b>
+        </div>
+
+        <div id="notice" class="notice"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>2. 추출 결과</h2>
+          <span class="hint">원본 순서 유지</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><span>원본 행 수</span><strong id="sourceCount">0</strong></div>
+          <div class="stat"><span>추출 성공</span><strong id="resultCount">0</strong></div>
+        </div>
+
+        <div class="actions" style="margin-top:0;margin-bottom:14px">
+          <button class="sub" id="copyBtn">결과 복사</button>
+          <button class="sub" id="csvBtn">CSV 다운로드</button>
+          <button class="sub" id="xlsxBtn">XLSX 다운로드</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>방문시간</th>
+                <th>IP</th>
+                <th>통신사</th>
+                <th>클릭유형</th>
+                <th>광고종류</th>
+                <th>광고사이트</th>
+                <th>키워드</th>
+                <th>체류시간</th>
+                <th>GPS</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+          </table>
+          <div id="empty" class="empty">변환된 데이터가 없습니다.</div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="sessionid-view" class="hidden" aria-labelledby="sessionid-title">
+    <div class="wrap">
+      <h1 id="sessionid-title">스마트로그 세션ID 추출</h1>
+      <p class="desc">스마트로그 원본 로그를 그대로 붙여넣으면 Excel에 바로 붙여넣을 수 있는 TSV로 변환하고 CSV 또는 XLSX 파일로 다운로드할 수 있습니다. <b>signal_cellular_alt</b>, PC/모바일 매체 세부명은 자동 정리하며 통신사·GPS 칼럼은 출력하지 않습니다.</p>
+
+      <button type="button" id="sessionid-back-btn">CX 계산기로 돌아가기</button>
+
+      <div class="grid">
+        <section class="card">
+          <div class="title">원본 로그 붙여넣기</div>
+          <textarea id="sessionid-input" placeholder="여기에 로그 데이터를 그대로 붙여넣으세요."></textarea>
+          <div class="actions">
+            <button class="primary" id="sessionid-convert">TSV 변환</button>
+            <button class="secondary" id="sessionid-clear">초기화</button>
+          </div>
+          <div id="sessionid-input-status" class="status"></div>
+        </section>
+
+        <section class="card">
+          <div class="title">TSV 결과</div>
+          <textarea id="sessionid-output" readonly placeholder="변환 결과가 여기에 표시됩니다."></textarea>
+          <div class="actions">
+            <button class="primary" id="sessionid-copy">TSV 복사</button>
+            <button class="secondary" id="sessionid-csv-download">CSV 다운로드</button>
+            <button class="secondary" id="sessionid-xlsx-download">XLSX 다운로드</button>
+          </div>
+          <div class="columns">방문시간 → IP → 클릭유형 → 광고종류 → 광고사이트 → 키워드 → 체류시간</div>
+          <div id="sessionid-output-status" class="status"></div>
+        </section>
+      </div>
+    </div>
+  </section>
 
   <div class="footer">Smartlog CX Internal Calculator · <span id="footer-version">v1.0.0</span></div>
 </div>
 
-<script src="version.js"></script>
-<script src="app.js"></script>
+<script src="js/version.js"></script>
+<script src="js/app.js"></script>
+<script src="js/sms.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/mobile.js"></script>
+<script src="js/sessionid.js"></script>
 </body>
 </html>

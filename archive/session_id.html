@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스마트로그 세션ID 추출</title>
+<link rel="stylesheet" href="sessionid.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>스마트로그 세션ID 추출</h1>
+  <p class="desc">스마트로그 원본 로그를 그대로 붙여넣으면 Excel에 바로 붙여넣을 수 있는 TSV로 변환하고 CSV 또는 XLSX 파일로 다운로드할 수 있습니다. <b>signal_cellular_alt</b>, PC/모바일 매체 세부명은 자동 정리하며 통신사·GPS 칼럼은 출력하지 않습니다.</p>
+
+  <div class="grid">
+    <section class="card">
+      <div class="title">원본 로그 붙여넣기</div>
+      <textarea id="input" placeholder="여기에 로그 데이터를 그대로 붙여넣으세요."></textarea>
+      <div class="actions">
+        <button class="primary" id="convert">TSV 변환</button>
+        <button class="secondary" id="clear">초기화</button>
+      </div>
+      <div id="inputStatus" class="status"></div>
+    </section>
+
+    <section class="card">
+      <div class="title">TSV 결과</div>
+      <textarea id="output" readonly placeholder="변환 결과가 여기에 표시됩니다."></textarea>
+      <div class="actions">
+        <button class="primary" id="copy">TSV 복사</button>
+        <button class="secondary" id="csvDownload">CSV 다운로드</button>
+        <button class="secondary" id="xlsxDownload">XLSX 다운로드</button>
+      </div>
+      <div class="columns">방문시간 → IP → 클릭유형 → 광고종류 → 광고사이트 → 키워드 → 체류시간</div>
+      <div id="outputStatus" class="status"></div>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="sessionid.js"></script>
+</body>
+</html>

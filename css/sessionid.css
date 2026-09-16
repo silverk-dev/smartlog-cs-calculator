@@ -1,0 +1,24 @@
+#sessionid-view{
+    --bg:#f5f7fb; --card:#fff; --text:#172033; --muted:#6b7280;
+    --line:#d9dfeb; --primary:#2563eb; --primary2:#1d4ed8;
+    --ok:#0f766e; --danger:#b91c1c;
+  }
+  #sessionid-view *{box-sizing:border-box}
+  #sessionid-view{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"Noto Sans KR",sans-serif}
+  #sessionid-view .wrap{max-width:1200px;margin:0 auto;padding:28px 18px 50px}
+  #sessionid-view h1{font-size:26px;margin:0 0 8px}
+  #sessionid-view .desc{color:var(--muted);margin:0 0 22px;line-height:1.6}
+  #sessionid-view .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  #sessionid-view .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 4px 18px rgba(20,30,50,.05)}
+  #sessionid-view .title{font-weight:700;margin-bottom:10px}
+  #sessionid-view textarea{width:100%;min-height:480px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:14px;font:14px/1.55 Consolas,monospace;outline:none}
+  #sessionid-view textarea:focus{border-color:var(--primary)}
+  #sessionid-view .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  #sessionid-view button{border:0;border-radius:9px;padding:10px 15px;font-weight:700;cursor:pointer}
+  #sessionid-view .primary{background:var(--primary);color:white}
+  #sessionid-view .primary:hover{background:var(--primary2)}
+  #sessionid-view .secondary{background:#eef2f7;color:#253047}
+  #sessionid-view .status{margin-top:10px;font-size:13px;color:var(--muted)}
+  #sessionid-view .status.ok{color:var(--ok)} #sessionid-view .status.err{color:var(--danger)}
+  #sessionid-view .columns{font-size:13px;color:var(--muted);margin-top:8px}
+  @media(max-width:850px){#sessionid-view .grid{grid-template-columns:1fr} #sessionid-view textarea{min-height:360px}}

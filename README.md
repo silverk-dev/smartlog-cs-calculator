@@ -4,7 +4,7 @@
 
 ## 버전 관리 방식
 
-버전 정보의 **단일 기준(Single Source of Truth)** 은 `version.js`입니다.
+버전 정보의 **단일 기준(Single Source of Truth)** 은 `js/version.js`입니다.
 
 ```js
 window.APP_META = Object.freeze({
@@ -14,7 +14,7 @@ window.APP_META = Object.freeze({
 });
 ```
 
-새 버전을 배포할 때는 `version.js`만 수정하면 계산기 화면 상단/하단의 버전 표기가 자동으로 변경됩니다.
+새 버전을 배포할 때는 `js/version.js`만 수정하면 계산기 화면 상단/하단의 버전 표기가 자동으로 변경됩니다.
 
 README에는 현재 버전 숫자를 별도로 적지 않으므로 버전 번호를 중복 수정할 필요가 없습니다.
 
@@ -23,17 +23,31 @@ README에는 현재 버전 숫자를 별도로 적지 않으므로 버전 번호
 ```text
 smartlog-cx-calculator/
 ├─ index.html
-├─ styles.css
-├─ version.js
-├─ app.js
-├─ CHANGELOG.md
-└─ README.md
+├─ README.md
+├─ js/
+│  ├─ version.js
+│  ├─ app.js
+│  ├─ sms.js
+│  ├─ mobile.js
+│  └─ ui.js
+└─ css/
+  ├─ styles.css
+  ├─ sms.css
+  └─ mobile.css
+└─ archive/
+   └─ mobile_session.html
 ```
 
 - `index.html` — 화면 구조
-- `styles.css` — UI / 반응형 스타일
-- `version.js` — 버전 / 배포일 / 요금 기준 연도
-- `app.js` — 계산 로직 및 인터랙션
+- `css/styles.css` — 계산기 UI / 반응형 스타일
+- `css/sms.css` — SMS 추출기 UI / 반응형 스타일
+- `css/mobile.css` — 단말기세션 추출기 UI / 반응형 스타일
+- `js/version.js` — 버전 / 배포일 / 요금 기준 연도
+- `js/app.js` — 계산 로직 및 인터랙션
+- `js/sms.js` — SMS 추출 및 다운로드 로직
+- `js/mobile.js` — 단말기세션 로그 추출 및 다운로드 로직
+- `js/ui.js` — 계산기와 SMS 화면 전환
+- `archive/mobile_session.html` — 단말기세션 추출기 원본/단독 테스트용 참고 파일
 - `README.md` — 운영 / 배포 가이드
 
 ## 버전 규칙
@@ -48,9 +62,9 @@ smartlog-cx-calculator/
 
 ### 1. 기능 수정
 
-필요한 `index.html`, `styles.css`, `app.js`를 수정합니다.
+필요한 `index.html`, `css/styles.css`, `js/app.js`를 수정합니다.
 
-### 2. version.js 한 곳만 수정
+### 2. js/version.js 한 곳만 수정
 
 ```js
 window.APP_META = Object.freeze({
