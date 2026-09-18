@@ -296,6 +296,9 @@
 
   function syncUI(){
     const partner = $('#member').value === 'partner';
+    const upgradeRefundSection = $('#upgrade-refund-section');
+    const priceBox = partner ? $('#partner-price-box') : $('#general-price-box');
+    priceBox.after(upgradeRefundSection);
 
     $('#refund-fields').classList.toggle('hidden', mode !== 'refund');
     $('#upgrade-fields').classList.toggle('hidden', mode !== 'upgrade');
@@ -437,26 +440,15 @@
     $('#d-floor').textContent = money(usedFloor);
 
     if(hasUpgradeHistory){
-      const history = getUpgradeHistory().sort((a,b) => a.date - b.date || a.index - b.index);
-      const historyText = history.map((item, idx) =>
-        `${idx + 1}차 업그레이드: ${item.dateText} / ${labelPv(item.pv)} / 추가결제 ${money(item.amount)}`
-      ).join('\n');
-      const basePaid = partner ? partnerTotal() : generalTotal();
-      const extraPaid = getUpgradeExtraPaid(history);
-
-      $('#cs-text').value =
-`[업그레이드 이력 포함 환불 계산]
-회원구분: ${partner ? '일반 파트너회원' : '일반회원'}
-최초 상품: ${labelPv(pv)} / ${period}개월${partner ? ` / 선택 할인율 ${$('#discount').value}%${period === 24 ? ` / 실제 적용 ${partnerEffectiveDiscount()}%` : ''}` : ''}
-최초 결제금액: ${money(basePaid)}
-${historyText}
-추가 결제금액 합계: ${money(extraPaid)}
-총 결제금액: ${money(paid)}
-최종 적용 PV: ${labelPv(finalPv)}
-서비스 사용일: ${days}일
-${partner ? '총 결제금액 기준 일요금' : '정가 일요금'}: ${money(daily)}
-사용요금(10원 단위 절삭): ${money(usedFloor)}
-최종 환불금액: ${money(refund)}`;
+      $('#cs-text').value = partner
+        ?
+`1:1)서비스 환불 요청
+${Math.round(paid).toLocaleString('ko-KR')}원/${period}개월=${Math.round(monthly).toLocaleString('ko-KR')}원/30일=${Math.round(daily).toLocaleString('ko-KR')}원*${days}일 사용=${Math.round(usedFloor).toLocaleString('ko-KR')}원(10원 단위 절사)
+${Math.round(paid).toLocaleString('ko-KR')}-${Math.round(usedFloor).toLocaleString('ko-KR')}=${Math.round(refund).toLocaleString('ko-KR')}원 환불`
+        :
+`1:1)서비스 환불 요청
+총 ${Math.round(paid).toLocaleString('ko-KR')}원 결제. ${Math.round(daily).toLocaleString('ko-KR')}원(${labelPv(finalPv)} 하루 요금)*${days}일 사용=${Math.round(usedFloor).toLocaleString('ko-KR')}원(10원 단위 절사)
+${Math.round(paid).toLocaleString('ko-KR')}-${Math.round(usedFloor).toLocaleString('ko-KR')}=${Math.round(refund).toLocaleString('ko-KR')}원 환불`;
     } else {
       $('#cs-text').value =
 `1:1)서비스 환불 요청
