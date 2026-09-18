@@ -73,14 +73,6 @@
             <div class="helper">페이지뷰와 결제 기간을 선택하면 VAT 포함 금액이 자동 표시됩니다.</div>
           </div>
 
-          <div id="upgrade-refund-toggle-wrap" class="upgrade-refund-toggle">
-            <label class="check-row" for="has-upgrade-history">
-              <input id="has-upgrade-history" type="checkbox">
-              <span>업그레이드 추가 결제 이력이 있음</span>
-            </label>
-            <div class="helper">PV 업그레이드를 1회 이상 추가 결제한 뒤 환불하는 경우 선택하세요. 일반회원과 일반 파트너회원 모두 사용할 수 있습니다.</div>
-          </div>
-
           <div id="upgrade-refund-section" class="upgrade-history-panel hidden">
             <div class="section-heading-row">
               <div>
@@ -126,6 +118,14 @@
             <div class="auto-label">자동 계산된 파트너 실제 결제금액</div>
             <div id="partner-total" class="auto-value">-</div>
             <div class="helper">선택한 페이지뷰 · 할인율 · 결제 기간 기준입니다. 24개월은 기본 30% 할인이 보장됩니다.</div>
+          </div>
+
+          <div id="upgrade-refund-toggle-wrap" class="upgrade-refund-toggle">
+            <label class="check-row" for="has-upgrade-history">
+              <input id="has-upgrade-history" type="checkbox">
+              <span>업그레이드 추가 결제 이력이 있음</span>
+            </label>
+            <div class="helper">PV 업그레이드를 1회 이상 추가 결제한 뒤 환불하는 경우 선택하세요. 일반회원과 일반 파트너회원 모두 사용할 수 있습니다.</div>
           </div>
 
           <div class="section-title">환불 기준일</div>
@@ -536,7 +536,7 @@
     </div>
   </section>
 
-  <div class="footer">Designed by Silverk in Euljiro· <span id="footer-version">v1.0.0</span></div>
+  <div class="footer">Smartlog CX Internal Calculator · <span id="footer-version">v1.0.0</span></div>
 </div>
 
 <script src="js/version.js"></script>
@@ -545,11 +545,5 @@
 <script src="js/ui.js"></script>
 <script src="js/mobile.js"></script>
 <script src="js/sessionid.js"></script>
-  <!-- Smartlog -->
-    <script type="text/javascript">
-        var hpt_info={'_account':'UHPT-32195', '_server': 'a29'};
-    </script>
-    <script language="javascript" src="//cdn.smlog.co.kr/core/smart.js" charset="utf-8"></script>
-    <noscript><img src="//a29.smlog.co.kr/smart_bda.php?_account=32195" style="display:none;width:0;height:0;" border="0"/></noscript>
 </body>
 </html>
