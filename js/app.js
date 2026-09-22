@@ -447,7 +447,7 @@ ${Math.round(paid).toLocaleString('ko-KR')}원/${period}개월=${Math.round(mont
 ${Math.round(paid).toLocaleString('ko-KR')}-${Math.round(usedFloor).toLocaleString('ko-KR')}=${Math.round(refund).toLocaleString('ko-KR')}원 환불`
         :
 `1:1)서비스 환불 요청
-총 ${Math.round(paid).toLocaleString('ko-KR')}원 결제. ${Math.round(daily).toLocaleString('ko-KR')}원(${labelPv(finalPv)} 하루 요금)*${days}일 사용=${Math.round(usedFloor).toLocaleString('ko-KR')}원(10원 단위 절사)
+총 ${Math.round(paid).toLocaleString('ko-KR')}원 결제. 월 ${Math.round(monthly).toLocaleString('ko-KR')}원/30일=${Math.round(daily).toLocaleString('ko-KR')}원*${days}일 사용=${Math.round(usedFloor).toLocaleString('ko-KR')}원(10원 단위 절사)
 ${Math.round(paid).toLocaleString('ko-KR')}-${Math.round(usedFloor).toLocaleString('ko-KR')}=${Math.round(refund).toLocaleString('ko-KR')}원 환불`;
     } else {
       $('#cs-text').value =
